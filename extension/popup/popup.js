@@ -159,7 +159,9 @@ function renderSummary(summary) {
 // ── Clear ──────────────────────────────────────────────────────────────────
 async function onClear() {
   if (currentTab) {
-    await chrome.runtime.sendMessage({ action: "clearCache", url: currentTab.url });
+    const { summaryLanguage = "English" } = await chrome.storage.local.get("summaryLanguage");
+    const cacheKey = `${currentTab.url}::${summaryLanguage}`;
+    await chrome.runtime.sendMessage({ action: "clearCache", cacheKey });
   }
   setButtonLabel("Summarize Page");
   setState("idle");
@@ -200,18 +202,28 @@ function flashCopyBtn() {
 
 // ── Settings ───────────────────────────────────────────────────────────────
 async function loadSettings() {
-  const { bulletCount } = await chrome.storage.local.get("bulletCount");
-  const count = String(bulletCount || 3);
-  const radio = document.querySelector(`input[name="bulletCount"][value="${count}"]`);
-  if (radio) radio.checked = true;
+  const store = await chrome.storage.local.get(["bulletCount", "summaryLanguage", "cacheTTL"]);
+
+  const count = String(store.bulletCount || 3);
+  const bulletRadio = document.querySelector(`input[name="bulletCount"][value="${count}"]`);
+  if (bulletRadio) bulletRadio.checked = true;
+
+  const lang = store.summaryLanguage || "English";
+  $("language-select").value = lang;
+
+  const ttl = String(store.cacheTTL || 24);
+  const ttlRadio = document.querySelector(`input[name="cacheTTL"][value="${ttl}"]`);
+  if (ttlRadio) ttlRadio.checked = true;
 }
 
 function openSettings() {
+  app.classList.add("settings-open");
   $("settings-panel").classList.add("open");
   $("settings-panel").setAttribute("aria-hidden", "false");
 }
 
 function closeSettings() {
+  app.classList.remove("settings-open");
   $("settings-panel").classList.remove("open");
   $("settings-panel").setAttribute("aria-hidden", "true");
 }
@@ -220,7 +232,12 @@ async function onSaveSettings() {
   const bulletCount = Number(
     document.querySelector("input[name='bulletCount']:checked")?.value || 3
   );
-  await chrome.storage.local.set({ bulletCount });
+  const summaryLanguage = $("language-select").value || "English";
+  const cacheTTL = Number(
+    document.querySelector("input[name='cacheTTL']:checked")?.value || 24
+  );
+
+  await chrome.storage.local.set({ bulletCount, summaryLanguage, cacheTTL });
   showSavedButton();
 }
 

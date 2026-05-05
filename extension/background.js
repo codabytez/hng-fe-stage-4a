@@ -1,7 +1,6 @@
 // Replace this with your deployed Vercel proxy URL after running: vercel --cwd proxy
-const PROXY_URL = "https://your-proxy.vercel.app/api/summarize";
+const PROXY_URL = "https://hng-fe-stage-4a.vercel.app/api/summarize";
 
-const CACHE_TTL = 86400000; // 24 hours
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "summarize") {
@@ -11,26 +10,36 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
   if (message.action === "clearCache") {
-    chrome.storage.local.remove(message.url).then(() => sendResponse({ ok: true }));
+    const key = message.cacheKey || message.url;
+    chrome.storage.local.remove(key).then(() => sendResponse({ ok: true }));
     return true;
   }
 });
 
 async function handleSummarize({ text, url }) {
-  // 1. Check cache
-  const cached = await chrome.storage.local.get(url);
-  if (cached[url] && Date.now() - cached[url].timestamp < CACHE_TTL) {
-    return { summary: cached[url].summary, cached: true };
-  }
+  const store = await chrome.storage.local.get(["bulletCount", "summaryLanguage", "cacheTTL"]);
+  const bulletCount = store.bulletCount || 3;
+  const summaryLanguage = store.summaryLanguage || "English";
+  const cacheTTLHours = store.cacheTTL !== undefined ? Number(store.cacheTTL) : 24;
+  const cacheTTL = cacheTTLHours * 60 * 60 * 1000;
 
-  const { bulletCount = 3 } = await chrome.storage.local.get("bulletCount");
+  // Cache key includes language so changing language always fetches fresh
+  const cacheKey = `${url}::${summaryLanguage}`;
+
+  // 1. Check cache (skip entirely if cacheTTL is 0)
+  if (cacheTTL > 0) {
+    const cached = await chrome.storage.local.get(cacheKey);
+    if (cached[cacheKey] && Date.now() - cached[cacheKey].timestamp < cacheTTL) {
+      return { summary: cached[cacheKey].summary, cached: true };
+    }
+  }
 
   // 2. Call proxy
   try {
     const res = await fetch(PROXY_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: text.slice(0, 12000), bulletCount })
+      body: JSON.stringify({ text: text.slice(0, 12000), bulletCount, summaryLanguage })
     });
 
     const data = await res.json().catch(() => ({}));
@@ -43,8 +52,10 @@ async function handleSummarize({ text, url }) {
     const { summary } = data;
     if (!summary) return { error: "Empty response from server." };
 
-    // 3. Cache result
-    await chrome.storage.local.set({ [url]: { summary, timestamp: Date.now() } });
+    // 3. Cache result (skip if cache is off)
+    if (cacheTTL > 0) {
+      await chrome.storage.local.set({ [cacheKey]: { summary, timestamp: Date.now() } });
+    }
 
     return { summary, cached: false };
 

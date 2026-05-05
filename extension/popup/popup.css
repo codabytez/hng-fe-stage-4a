@@ -42,6 +42,10 @@ body {
   overflow: hidden;
 }
 
+#app.settings-open {
+  min-height: 420px;
+}
+
 /* ─────────────────────────────────────────────
    Header
 ───────────────────────────────────────────── */
@@ -559,6 +563,41 @@ code {
 }
 
 /* Segmented control */
+.select-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.select-input {
+  width: 100%;
+  padding: 8px 28px 8px 10px;
+  background: var(--bg-surface);
+  border: 0.5px solid var(--border);
+  border-radius: 6px;
+  font-size: 11px;
+  color: var(--text-primary);
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.12s;
+}
+
+.select-input:focus { border-color: var(--primary); }
+
+.select-arrow {
+  position: absolute;
+  right: 9px;
+  pointer-events: none;
+  color: var(--text-muted);
+}
+
+.select-input option {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+}
+
 .segmented {
   display: flex;
   background: var(--bg-surface);

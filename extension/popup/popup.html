@@ -139,6 +139,7 @@
       </div>
 
       <div class="settings-body">
+
         <div class="field">
           <label class="field-label">Bullet count</label>
           <div class="segmented" role="group" aria-label="Bullet count">
@@ -156,6 +157,49 @@
             </label>
           </div>
         </div>
+
+        <div class="field">
+          <label class="field-label" for="language-select">Summary language</label>
+          <div class="select-wrap">
+            <select class="select-input" id="language-select">
+              <option value="English">English</option>
+              <option value="Spanish">Spanish</option>
+              <option value="French">French</option>
+              <option value="German">German</option>
+              <option value="Portuguese">Portuguese</option>
+              <option value="Arabic">Arabic</option>
+              <option value="Chinese">Chinese (Simplified)</option>
+              <option value="Japanese">Japanese</option>
+              <option value="Korean">Korean</option>
+              <option value="Hindi">Hindi</option>
+            </select>
+            <svg class="select-arrow" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Cache duration</label>
+          <div class="segmented" role="group" aria-label="Cache duration">
+            <label class="seg-option">
+              <input type="radio" name="cacheTTL" value="0" />
+              <span>Off</span>
+            </label>
+            <label class="seg-option">
+              <input type="radio" name="cacheTTL" value="1" />
+              <span>1h</span>
+            </label>
+            <label class="seg-option">
+              <input type="radio" name="cacheTTL" value="24" checked />
+              <span>24h</span>
+            </label>
+            <label class="seg-option">
+              <input type="radio" name="cacheTTL" value="168" />
+              <span>7d</span>
+            </label>
+          </div>
+          <p class="field-hint">How long to keep summaries before re-fetching.</p>
+        </div>
+
       </div>
 
       <div class="settings-footer">

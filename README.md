@@ -90,7 +90,7 @@ popup.js — chrome.runtime.sendMessage({ action: "summarize", text, url })
         ▼
 background.js (service worker)
         ├── checks chrome.storage.local cache
-        └── POST https://page-summarizer-proxy.vercel.app/api/summarize
+        └── POST https://hng-fe-stage-4a.vercel.app/api/summarize
                 │
                 ▼
            Vercel proxy  ←  ANTHROPIC_API_KEY (env variable, never in source)
@@ -129,14 +129,14 @@ If the content script hasn't been injected yet (tab was open before the extensio
 
 ## Security Decisions
 
-| Concern | Approach |
-| --- | --- |
-| API key | Stored as a Vercel environment variable — never in source code, never in the extension, never committed |
-| API calls | Made exclusively from the Vercel proxy (server-side) — background.js has no key |
-| XSS prevention | All AI output inserted via `textContent`, never `innerHTML` |
-| Message validation | Each `onMessage` handler checks `message.action` before processing |
-| Content script scope | Matches only `http://` and `https://` — `chrome://` pages blocked before `executeScript` is called |
-| Secrets in repo | `.gitignore` excludes `.env`, `secrets.json`; `background.js` contains no credentials |
+| Concern              | Approach                                                                                                |
+| -------------------- | ------------------------------------------------------------------------------------------------------- |
+| API key              | Stored as a Vercel environment variable — never in source code, never in the extension, never committed |
+| API calls            | Made exclusively from the Vercel proxy (server-side) — background.js has no key                         |
+| XSS prevention       | All AI output inserted via `textContent`, never `innerHTML`                                             |
+| Message validation   | Each `onMessage` handler checks `message.action` before processing                                      |
+| Content script scope | Matches only `http://` and `https://` — `chrome://` pages blocked before `executeScript` is called      |
+| Secrets in repo      | `.gitignore` excludes `.env`, `secrets.json`; `background.js` contains no credentials                   |
 
 ---
 
@@ -162,7 +162,7 @@ The proxy is already deployed. If you need to redeploy:
 
 ---
 
-## Demo
+<!-- ## Demo
 
 Record a 2–5 minute video showing:
 
@@ -171,4 +171,4 @@ Record a 2–5 minute video showing:
 3. Clicking Summarize Page — showing extracting → summarizing (progress bar + skeleton) → summary ready
 4. Revisiting the same URL to show the Cached state
 5. Clicking Copy and pasting the result
-6. Changing bullet count in Settings and re-summarizing
+6. Changing bullet count in Settings and re-summarizing -->

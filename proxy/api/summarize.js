@@ -10,7 +10,7 @@ export default async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(200).end();
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-  const { text, bulletCount = 3 } = req.body ?? {};
+  const { text, bulletCount = 3, summaryLanguage = "English" } = req.body ?? {};
 
   if (!text || typeof text !== "string" || text.trim().length < 50) {
     return res.status(400).json({ error: "Missing or too-short text" });
@@ -34,7 +34,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         model: MODEL,
         max_tokens: 1024,
-        system: "You are a webpage summarizer. Return ONLY valid JSON, no markdown, no backticks.",
+        system: `You are a webpage summarizer. Return ONLY valid JSON, no markdown, no backticks. Write all text values in ${summaryLanguage}.`,
         messages: [{
           role: "user",
           content: `Summarize this webpage. Return JSON with exactly this shape:
