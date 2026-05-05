@@ -23,8 +23,8 @@ async function handleSummarize({ text, url }) {
   const cacheTTLHours = store.cacheTTL !== undefined ? Number(store.cacheTTL) : 24;
   const cacheTTL = cacheTTLHours * 60 * 60 * 1000;
 
-  // Cache key includes language so changing language always fetches fresh
-  const cacheKey = `${url}::${summaryLanguage}`;
+  // Cache key includes language and bullet count so changing either fetches fresh
+  const cacheKey = `${url}::${summaryLanguage}::${bulletCount}`;
 
   // 1. Check cache (skip entirely if cacheTTL is 0)
   if (cacheTTL > 0) {

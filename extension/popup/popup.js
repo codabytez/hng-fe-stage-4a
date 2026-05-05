@@ -159,8 +159,10 @@ function renderSummary(summary) {
 // ── Clear ──────────────────────────────────────────────────────────────────
 async function onClear() {
   if (currentTab) {
-    const { summaryLanguage = "English" } = await chrome.storage.local.get("summaryLanguage");
-    const cacheKey = `${currentTab.url}::${summaryLanguage}`;
+    const store = await chrome.storage.local.get(["summaryLanguage", "bulletCount"]);
+    const summaryLanguage = store.summaryLanguage || "English";
+    const bulletCount = store.bulletCount || 3;
+    const cacheKey = `${currentTab.url}::${summaryLanguage}::${bulletCount}`;
     await chrome.runtime.sendMessage({ action: "clearCache", cacheKey });
   }
   setButtonLabel("Summarize Page");
