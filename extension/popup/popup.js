@@ -259,7 +259,8 @@ function showSavedButton() {
     btn.classList.remove("saved");
     check.classList.add("hidden");
     label.textContent = "Save";
-  }, 2000);
+    closeSettings();
+  }, 1500);
 }
 
 // ── Progress bar ───────────────────────────────────────────────────────────
