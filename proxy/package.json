@@ -1,0 +1,6 @@
+{
+  "name": "page-summarizer-proxy",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Proxy server for Page Summarizer Chrome Extension — keeps the Anthropic API key server-side"
+}

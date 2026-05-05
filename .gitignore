@@ -1,0 +1,16 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Never commit secrets
+.env
+*.env.*
+secrets.json
+
+# Node (only used for icon generation script)
+node_modules/
