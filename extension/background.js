@@ -1,5 +1,5 @@
 // Replace this with your deployed Vercel proxy URL after running: vercel --cwd proxy
-const PROXY_URL = "https://hng-fe-stage-4a.vercel.app/api/summarize";
+const PROXY_URL = "https://page-summarizer-extension.vercel.app/api/summarize";
 
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
